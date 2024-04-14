@@ -1,8 +1,11 @@
 mod version_json;
 mod install_profile;
+mod jvm_args;
+mod library;
 
 use clap::{Args, Parser};
 
+#[derive(Debug)]
 struct Error(String);
 
 impl <E> From<E> for Error where E: std::error::Error {
@@ -23,14 +26,25 @@ struct FileArgs {
 }
 
 #[derive(Parser, Clone)]
+struct JvmArgsArgs {
+    #[command(flatten)]
+    cmd: CmdArgs,
+
+
+    /// Use this when generating win_args.txt.
+    #[arg(long)]
+    windows: bool,
+}
+
+#[derive(Parser, Clone)]
 struct InstallProfileArgs {
     #[command(flatten)]
-    files: FileArgs,
+    cmd: CmdArgs,
 
 
     /// Version ID
     #[arg(value_name = "VERSION ID")]
-    version_id: String,
+    version_id: String
 }
 
 #[derive(Parser, Clone)]
@@ -53,6 +67,8 @@ struct CmdArgs {
 enum Command {
     /// Generates version.json.
     VersionJson(CmdArgs),
+    /// Generates {win,unix}_args.txt
+    JvmArgs(JvmArgsArgs),
     /// Generates install_profile.json.
     InstallProfile(InstallProfileArgs)
 }
@@ -61,7 +77,8 @@ fn main() {
     let args = Command::parse();
     let res = match args {
         Command::VersionJson(f) => version_json::gen_version_json(f),
-        Command::InstallProfile(f) => install_profile::gen_install_profile(f)
+        Command::InstallProfile(f) => install_profile::gen_install_profile(f),
+        Command::JvmArgs(f) => jvm_args::gen_jvm_args(f),
     };
     if let Err(e) = res {
         eprintln!("{}", e.0);

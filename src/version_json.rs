@@ -3,18 +3,12 @@ use std::{fs::File, io::{Read, Write}};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{CmdArgs, Error};
+use crate::{library::get_addes_librarys, CmdArgs, Error};
 
 #[derive(Deserialize, Serialize)]
 struct VersionJsonArgs {
     game: Vec<String>,
     jvm: Vec<String>,
-}
-
-#[derive(Deserialize, Serialize)]
-struct FabricStyleLibrary {
-    name: String,
-    url: String,
 }
 
 pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_ver: String, quilt_ver: String) -> Result<String, Error> {
@@ -41,27 +35,10 @@ pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_
     let game_version = root_obj.get("inheritsFrom")
         .ok_or(Error("Huh? No inheritsFrom in version.json?".to_string()))?.as_str()
         .ok_or(Error("Huh? inheritsFrom isn't a string?".to_string()))?;
-    let quilt_url = format!("https://meta.quiltmc.org/v3/versions/loader/{game_version}/{quilt_ver}/profile/json");
-    let quilt_json: Value = reqwest::blocking::get(quilt_url)?.json()?;
-    let quilt_json = quilt_json.as_object()
-        .ok_or(Error("Huh? Quilt meta's profile json isn't an object?".to_string()))?;
-    let libraries = serde_json::from_value::<Vec<FabricStyleLibrary>>(quilt_json.get("libraries")
-        .ok_or(Error("Huh? No libraries in Quilt profile json?".to_string()))?.clone())?;
-    let pillow_library = &FabricStyleLibrary {
-        name: format!("com.github.PillowMC:pillow:{pillow_ver}"), // Just because of the limitation of jitpack.io
-        url: "https://jitpack.io/".to_string()
-    };
-
-    let intermediary2srg_library = &FabricStyleLibrary {
-        name: format!("net.pillowmc:intermediary2srg:{game_version}"), // Just because of the limitation of jitpack.io
-        url: "".to_string()
-    };
-    let added_libs = libraries
-        .iter()
-        .filter(|i|!(i.name.starts_with("org.ow2.asm")||i.name.contains(":intermediary:")))
-        .chain(vec!(intermediary2srg_library, pillow_library))
+    let added_libs = get_addes_librarys(game_version.to_string(), pillow_ver, quilt_ver, false, true)?;
+    let added_libs = added_libs.iter()
         .map(|i|serde_json::to_value(i).unwrap());
-    root_obj.get_mut("libraries").ok_or(Error("Hih? No libraries in version.json?".to_string()))?
+    root_obj.get_mut("libraries").ok_or(Error("Huh? No libraries in version.json?".to_string()))?
         .as_array_mut().ok_or(Error("Huh? libraries in version.json isn't an array?".to_string()))?
         .extend(added_libs);
 

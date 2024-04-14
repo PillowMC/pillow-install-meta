@@ -2,11 +2,11 @@ use std::{fs::File, io::{Read, Write}};
 
 use serde_json::{json, Value};
 
-use crate::{Error, InstallProfileArgs};
+use crate::{library::{get_addes_librarys, FabricStyleLibrary, VanillaStyleLibrary}, Error, InstallProfileArgs};
 
 const ICON: &str = include_str!("icon.txt");
 
-pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, version_id: String) -> Result<(), Error> {
+pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, version_id: String, pillow_ver: String, quilt_ver: String) -> Result<(), Error> {
     let mut input: Value = serde_json::from_reader(reader)?;
     let root_obj = input
         .as_object_mut()
@@ -66,6 +66,13 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
             }
         }
     }));
+
+    let added_libs = get_addes_librarys(mc_ver.clone(), pillow_ver, quilt_ver, false, false)?;
+    let added_libs = added_libs.iter()
+        .map(|i|<FabricStyleLibrary as TryInto<VanillaStyleLibrary>>::try_into(i.clone()).unwrap())
+        .map(|i|serde_json::to_value(i).unwrap());
+
+    libraries.extend(added_libs);
 
     let processors = root_obj.get_mut("processors")
         .ok_or(Error("Huh? No processors in install_profile.json?".to_string()))?.as_array_mut()
@@ -155,5 +162,5 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
 }
 
 pub(crate) fn gen_install_profile(args: InstallProfileArgs) -> Result<(), Error> {
-    create_install_profile(File::open(args.files.input)?, File::create(args.files.output)?, args.version_id)
+    create_install_profile(File::open(args.cmd.files.input)?, File::create(args.cmd.files.output)?, args.version_id, args.cmd.pillow_ver, args.cmd.quilt_ver)
 }
