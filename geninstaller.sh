@@ -16,7 +16,7 @@ cd -
 cp -r pillow-data temp/b
 mkdir temp/b/data
 
-version_id=`cargo run version-json $extract_dir/version.json temp/b/version.json $3 $4`
+version_id=`cargo run --release version-json $extract_dir/version.json temp/b/version.json $3 $4`
 cargo run --release install-profile $extract_dir/install_profile.json temp/b/install_profile.json $3 $4 $version_id
 cargo run --release jvm-args $extract_dir/data/unix_args.txt temp/b/data/unix_args.txt $3 $4
 cargo run --release jvm-args $extract_dir/data/win_args.txt temp/b/data/win_args.txt $3 $4 --windows
