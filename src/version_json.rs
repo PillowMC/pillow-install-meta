@@ -3,7 +3,7 @@ use std::{fs::File, io::{Read, Write}};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{library::get_addes_librarys, CmdArgs, Error};
+use crate::{library::get_added_librarys, CmdArgs, Error};
 
 #[derive(Deserialize, Serialize)]
 struct VersionJsonArgs {
@@ -35,7 +35,7 @@ pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_
     let game_version = root_obj.get("inheritsFrom")
         .ok_or(Error("Huh? No inheritsFrom in version.json?".to_string()))?.as_str()
         .ok_or(Error("Huh? inheritsFrom isn't a string?".to_string()))?;
-    let added_libs = get_addes_librarys(game_version.to_string(), pillow_ver, quilt_ver, false, true)?;
+    let added_libs = get_added_librarys(game_version.to_string(), pillow_ver, quilt_ver, false, true)?;
     let added_libs = added_libs.iter()
         .map(|i|serde_json::to_value(i).unwrap());
     root_obj.get_mut("libraries").ok_or(Error("Huh? No libraries in version.json?".to_string()))?

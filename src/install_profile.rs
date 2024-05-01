@@ -2,7 +2,7 @@ use std::{fs::File, io::{Read, Write}};
 
 use serde_json::{json, Value};
 
-use crate::{library::{get_addes_librarys, FabricStyleLibrary, VanillaStyleLibrary}, Error, InstallProfileArgs};
+use crate::{library::{get_added_librarys, FabricStyleLibrary, VanillaStyleLibrary}, Error, InstallProfileArgs};
 
 const ICON: &str = include_str!("icon.txt");
 
@@ -34,17 +34,6 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
         .ok_or(Error("Huh? libraries in install_profile.json isn't an array?".to_string()))?;
 
     libraries.push(json!({
-        "name": format!("net.fabricmc:intermediary:{mc_ver}:v2@jar"),
-        "downloads": {
-            "artifact": {
-                "sha1": "24eb81a03e2ec74bb966baffdbc0b45dc0df5e00",
-                "size": 539409,
-                "url": format!("https://maven.fabricmc.net/net/fabricmc/intermediary/{mc_ver}/intermediary-{mc_ver}-v2.jar"),
-                "path": format!("net/fabricmc/intermediary/{mc_ver}/intermediary-{mc_ver}-v2.jar")
-            }
-        }
-    }));
-    libraries.push(json!({
         "name": "net.fabricmc:mapping-io:0.5.1@jar",
         "downloads": {
             "artifact": {
@@ -67,8 +56,12 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
         }
     }));
 
-    let added_libs = get_addes_librarys(mc_ver.clone(), pillow_ver, quilt_ver, false, false)?;
+    let added_libs = get_added_librarys(mc_ver.clone(), pillow_ver, quilt_ver, false, false)?;
     let added_libs = added_libs.iter()
+        .chain(std::iter::once(&FabricStyleLibrary {
+            name: format!("net.fabricmc:intermediary:{mc_ver}:v2@jar"),
+            url: "https://maven.fabricmc.net/".to_string()
+        }))
         .map(|i|<FabricStyleLibrary as TryInto<VanillaStyleLibrary>>::try_into(i.clone()).unwrap())
         .map(|i|serde_json::to_value(i).unwrap());
 

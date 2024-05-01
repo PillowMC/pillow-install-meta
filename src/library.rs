@@ -27,8 +27,8 @@ pub(crate) struct VanillaStyleLibrary {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub(crate) struct FabricStyleLibrary {
-    name: String,
-    url: String,
+    pub name: String,
+    pub url: String,
 }
 
 impl FabricStyleLibrary {
@@ -83,7 +83,7 @@ impl TryInto<VanillaStyleLibrary> for FabricStyleLibrary {
     }
 }
 
-pub(crate) fn get_addes_librarys(game_version: String, pillow_ver: String, quilt_ver: String, server: bool, i2s: bool) -> Result<Vec<FabricStyleLibrary>, Error> {
+pub(crate) fn get_added_librarys(game_version: String, pillow_ver: String, quilt_ver: String, server: bool, i2s: bool) -> Result<Vec<FabricStyleLibrary>, Error> {
     let type_ = if server {
         "server"
     } else {

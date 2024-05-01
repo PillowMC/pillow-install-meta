@@ -1,6 +1,6 @@
 use std::{fs::File, io::{Read, Write}};
 
-use crate::{library::get_addes_librarys, Error, JvmArgsArgs};
+use crate::{library::get_added_librarys, Error, JvmArgsArgs};
 
 const SEP_UNIX: &str = ":";
 const SEP_WINDOWS: &str = ";";
@@ -28,7 +28,7 @@ pub(crate) fn create_jvm_args(mut reader: impl Read, mut writer: impl Write, pil
             continue;
         }
         if i.starts_with("-DlegacyClassPath=") {
-            let added: String = get_addes_librarys(game_version.clone(), pillow_ver.clone(), quilt_ver.clone(), true, true)?.iter()
+            let added: String = get_added_librarys(game_version.clone(), pillow_ver.clone(), quilt_ver.clone(), true, true)?.iter()
                 .map(|i|format!("{sep}libraries/{}", i.get_path())).collect();
             writeln!(writer, "{i}{added}")?;
             continue;
