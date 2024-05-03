@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 if [ $# -ne 4 ]; then
 echo Argument count wrong!
 exit 1
