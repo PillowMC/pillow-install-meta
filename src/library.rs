@@ -28,6 +28,7 @@ pub(crate) struct VanillaStyleLibrary {
 #[derive(Deserialize, Serialize, Clone)]
 pub(crate) struct FabricStyleLibrary {
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
 }
 
