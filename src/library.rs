@@ -28,7 +28,7 @@ pub(crate) struct VanillaStyleLibrary {
 #[derive(Deserialize, Serialize, Clone)]
 pub(crate) struct FabricStyleLibrary {
     pub name: String,
-    pub url: String,
+    pub url: Option<String>,
 }
 
 impl FabricStyleLibrary {
@@ -62,7 +62,7 @@ impl TryInto<VanillaStyleLibrary> for FabricStyleLibrary {
     type Error = Error;
     fn try_into(self) -> Result<VanillaStyleLibrary, Error> {
         let path = self.get_path();
-        let url = format!("{}{}", self.url, path);
+        let url = format!("{}{}", self.url.unwrap_or("".to_string()), path);
         eprintln!("{}: {}", self.name, url);
         let mut hash = Sha1::new();
         let mut req = reqwest::blocking::get(url.clone())?;
@@ -97,12 +97,12 @@ pub(crate) fn get_added_librarys(game_version: String, pillow_ver: String, quilt
         .ok_or(Error("Huh? No libraries in Quilt profile json?".to_string()))?.clone())?;
     let pillow_library = FabricStyleLibrary {
         name: format!("com.github.PillowMC:pillow:{pillow_ver}"), // Just because of the limitation of jitpack.io
-        url: "https://jitpack.io/".to_string()
+        url: Some("https://jitpack.io/".to_string())
     };
 
     let intermediary2srg_library = FabricStyleLibrary {
         name: format!("net.pillowmc:intermediary2srg:{game_version}"), // Just because of the limitation of jitpack.io
-        url: "".to_string()
+        url: None
     };
     Ok(libraries
         .iter()
