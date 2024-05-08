@@ -59,7 +59,7 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
     let added_libs = get_added_librarys(mc_ver.clone(), pillow_ver, quilt_ver, false, false)?;
     let intermediary = &FabricStyleLibrary {
         name: format!("net.fabricmc:intermediary:{mc_ver}:v2@jar"),
-        url: "https://maven.fabricmc.net/".to_string()
+        url: Some("https://maven.fabricmc.net/".to_string())
     };
     let added_libs = added_libs.iter()
         .chain(std::iter::once(intermediary))
