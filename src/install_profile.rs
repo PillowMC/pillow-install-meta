@@ -22,6 +22,7 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
         Value::String(version_id),
     );
     root_obj.remove("mirrorList");
+    root_obj["data"].as_object_mut().ok_or(Error("Huh? data in install_profile.json isn't an object?".to_string()))?.remove("BINPATCH");
 
     let mc_ver = {
         root_obj.get("minecraft")

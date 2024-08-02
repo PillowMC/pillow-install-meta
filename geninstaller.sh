@@ -23,4 +23,5 @@ cargo run --release jvm-args $extract_dir/data/unix_args.txt temp/b/data/unix_ar
 cargo run --release jvm-args $extract_dir/data/win_args.txt temp/b/data/win_args.txt $3 $4 --windows
 
 cp $real_in $real_out
+zip -d $real_out data/client.lzma data/server.lzma
 jar -u --file $real_out -C temp/b .
