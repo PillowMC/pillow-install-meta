@@ -97,7 +97,7 @@ pub(crate) fn get_added_librarys(game_version: String, pillow_ver: String, fabri
     let libraries = serde_json::from_value::<Vec<FabricStyleLibrary>>(fabric_json.get("libraries")
         .ok_or(Error("Huh? No libraries in Fabric profile json?".to_string()))?.clone())?;
     let pillow_library = FabricStyleLibrary {
-        name: format!("com.github.PillowMC:pillow:{pillow_ver}-fabric"), // Just because of the limitation of jitpack.io
+        name: format!("com.github.PillowMC:pillow:{pillow_ver}"), // Just because of the limitation of jitpack.io
         url: Some("https://jitpack.io/".to_string())
     };
 
