@@ -56,9 +56,9 @@ struct CmdArgs {
     #[arg(value_name = "PILLOW VERSION")]
     pillow_ver: String,
 
-    /// Quilt Loader version
-    #[arg(value_name = "QUILT LOADER VERSION")]
-    quilt_ver: String,
+    /// Fabric Loader version
+    #[arg(value_name = "FABRIC LOADER VERSION")]
+    fabric_ver: String,
 }
 
 /// Pillow installer generator.

@@ -11,7 +11,7 @@ struct VersionJsonArgs {
     jvm: Vec<String>,
 }
 
-pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_ver: String, quilt_ver: String) -> Result<String, Error> {
+pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_ver: String, fabric_ver: String) -> Result<String, Error> {
     let mut input: Value = serde_json::from_reader(reader)?;
     let root_obj = input.as_object_mut().ok_or(Error("Huh? version.json isn't an object?".to_string()))?;
     let arguments = root_obj.get("arguments").ok_or(Error("Huh? No arguments in version.json?".to_string()))?;
@@ -28,14 +28,14 @@ pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_
     arguments.game[target_pos] = "pillowclient".to_string();
     arguments.jvm[ignore_list_pos] = format!("{},datafixerupper-", arguments.jvm[ignore_list_pos]);
     arguments.jvm.remove(ipv6_pos);
-    let version_id = format!("pillow-{pillow_ver}+fml-{fml_ver}+quilt-loader-{quilt_ver}");
+    let version_id = format!("pillow-{pillow_ver}+fml-{fml_ver}+fabric-loader-{fabric_ver}");
     root_obj.insert("id".to_string(), Value::String(version_id.clone()));
     root_obj.insert("arguments".to_string(), serde_json::to_value(arguments)?);
 
     let game_version = root_obj.get("inheritsFrom")
         .ok_or(Error("Huh? No inheritsFrom in version.json?".to_string()))?.as_str()
         .ok_or(Error("Huh? inheritsFrom isn't a string?".to_string()))?;
-    let added_libs = get_added_librarys(game_version.to_string(), pillow_ver, quilt_ver, false, true)?;
+    let added_libs = get_added_librarys(game_version.to_string(), pillow_ver, fabric_ver, false, true)?;
     let added_libs = added_libs.iter()
         .map(|i|serde_json::to_value(i).unwrap());
     root_obj.get_mut("libraries").ok_or(Error("Huh? No libraries in version.json?".to_string()))?
@@ -47,6 +47,6 @@ pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_
 }
 
 pub(crate) fn gen_version_json(args: CmdArgs) -> Result<(), Error> {
-    println!("{}", create_version_json(File::open(args.files.input)?, File::create(args.files.output)?, args.pillow_ver, args.quilt_ver)?);
+    println!("{}", create_version_json(File::open(args.files.input)?, File::create(args.files.output)?, args.pillow_ver, args.fabric_ver)?);
     Ok(())
 }

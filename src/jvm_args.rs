@@ -5,7 +5,7 @@ use crate::{library::get_added_librarys, Error, JvmArgsArgs};
 const SEP_UNIX: &str = ":";
 const SEP_WINDOWS: &str = ";";
 
-pub(crate) fn create_jvm_args(mut reader: impl Read, mut writer: impl Write, pillow_ver: String, quilt_ver: String, windows: bool) -> Result<(), Error> {
+pub(crate) fn create_jvm_args(mut reader: impl Read, mut writer: impl Write, pillow_ver: String, fabric_ver: String, windows: bool) -> Result<(), Error> {
     let sep = if windows {
         SEP_WINDOWS
     } else {
@@ -28,7 +28,7 @@ pub(crate) fn create_jvm_args(mut reader: impl Read, mut writer: impl Write, pil
             continue;
         }
         if i.starts_with("-DlegacyClassPath=") {
-            let added: String = get_added_librarys(game_version.clone(), pillow_ver.clone(), quilt_ver.clone(), true, true)?.iter()
+            let added: String = get_added_librarys(game_version.clone(), pillow_ver.clone(), fabric_ver.clone(), true, true)?.iter()
                 .map(|i|format!("{sep}libraries/{}", i.get_path())).collect();
             writeln!(writer, "{i}{added}")?;
             continue;
@@ -39,5 +39,5 @@ pub(crate) fn create_jvm_args(mut reader: impl Read, mut writer: impl Write, pil
 }
 
 pub(crate) fn gen_jvm_args(args: JvmArgsArgs) -> Result<(), Error> {
-    create_jvm_args(File::open(args.cmd.files.input)?, File::create(args.cmd.files.output)?, args.cmd.pillow_ver, args.cmd.quilt_ver, args.windows)
+    create_jvm_args(File::open(args.cmd.files.input)?, File::create(args.cmd.files.output)?, args.cmd.pillow_ver, args.cmd.fabric_ver, args.windows)
 }

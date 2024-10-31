@@ -6,7 +6,7 @@ use crate::{library::{get_added_librarys, FabricStyleLibrary, VanillaStyleLibrar
 
 const ICON: &str = include_str!("icon.txt");
 
-pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, version_id: String, pillow_ver: String, quilt_ver: String) -> Result<(), Error> {
+pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, version_id: String, pillow_ver: String, fabric_ver: String) -> Result<(), Error> {
     let mut input: Value = serde_json::from_reader(reader)?;
     let root_obj = input
         .as_object_mut()
@@ -57,7 +57,7 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
         }
     }));
 
-    let added_libs = get_added_librarys(mc_ver.clone(), pillow_ver, quilt_ver, false, false)?;
+    let added_libs = get_added_librarys(mc_ver.clone(), pillow_ver, fabric_ver, false, false)?;
     let intermediary = &FabricStyleLibrary {
         name: format!("net.fabricmc:intermediary:{mc_ver}:v2@jar"),
         url: Some("https://maven.fabricmc.net/".to_string())
@@ -157,5 +157,5 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
 }
 
 pub(crate) fn gen_install_profile(args: InstallProfileArgs) -> Result<(), Error> {
-    create_install_profile(File::open(args.cmd.files.input)?, File::create(args.cmd.files.output)?, args.version_id, args.cmd.pillow_ver, args.cmd.quilt_ver)
+    create_install_profile(File::open(args.cmd.files.input)?, File::create(args.cmd.files.output)?, args.version_id, args.cmd.pillow_ver, args.cmd.fabric_ver)
 }

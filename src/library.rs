@@ -84,20 +84,20 @@ impl TryInto<VanillaStyleLibrary> for FabricStyleLibrary {
     }
 }
 
-pub(crate) fn get_added_librarys(game_version: String, pillow_ver: String, quilt_ver: String, server: bool, i2s: bool) -> Result<Vec<FabricStyleLibrary>, Error> {
+pub(crate) fn get_added_librarys(game_version: String, pillow_ver: String, fabric_ver: String, server: bool, i2s: bool) -> Result<Vec<FabricStyleLibrary>, Error> {
     let type_ = if server {
         "server"
     } else {
         "profile"
     };
-    let quilt_url = format!("https://meta.quiltmc.org/v3/versions/loader/{game_version}/{quilt_ver}/{type_}/json");
-    let quilt_json: Value = reqwest::blocking::get(quilt_url)?.json()?;
-    let quilt_json = quilt_json.as_object()
-        .ok_or(Error("Huh? Quilt meta's profile json isn't an object?".to_string()))?;
-    let libraries = serde_json::from_value::<Vec<FabricStyleLibrary>>(quilt_json.get("libraries")
-        .ok_or(Error("Huh? No libraries in Quilt profile json?".to_string()))?.clone())?;
+    let fabric_url = format!("https://meta.fabricmc.net/v2/versions/loader/{game_version}/{fabric_ver}/{type_}/json");
+    let fabric_json: Value = reqwest::blocking::get(fabric_url)?.json()?;
+    let fabric_json = fabric_json.as_object()
+        .ok_or(Error("Huh? Fabric meta's profile json isn't an object?".to_string()))?;
+    let libraries = serde_json::from_value::<Vec<FabricStyleLibrary>>(fabric_json.get("libraries")
+        .ok_or(Error("Huh? No libraries in Fabric profile json?".to_string()))?.clone())?;
     let pillow_library = FabricStyleLibrary {
-        name: format!("com.github.PillowMC:pillow:{pillow_ver}"), // Just because of the limitation of jitpack.io
+        name: format!("com.github.PillowMC:pillow:{pillow_ver}-fabric"), // Just because of the limitation of jitpack.io
         url: Some("https://jitpack.io/".to_string())
     };
 
