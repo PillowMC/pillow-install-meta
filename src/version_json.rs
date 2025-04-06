@@ -26,7 +26,7 @@ pub(crate) fn create_version_json(reader: impl Read, writer: impl Write, pillow_
         )
     };
     arguments.game[target_pos] = "pillowclient".to_string();
-    arguments.jvm[ignore_list_pos] = format!("{},datafixerupper-", arguments.jvm[ignore_list_pos]);
+    arguments.jvm[ignore_list_pos] = format!("{},datafixerupper-,authlib", arguments.jvm[ignore_list_pos]);
     arguments.jvm.remove(ipv6_pos);
     let version_id = format!("pillow-{pillow_ver}+fml-{fml_ver}+quilt-loader-{quilt_ver}");
     root_obj.insert("id".to_string(), Value::String(version_id.clone()));

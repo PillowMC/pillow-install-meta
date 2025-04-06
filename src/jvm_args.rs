@@ -20,7 +20,7 @@ pub(crate) fn create_jvm_args(mut reader: impl Read, mut writer: impl Write, pil
             continue;
         }
         if i.starts_with("-DignoreList=") {
-            writeln!(writer, "{},datafixerupper-", i)?;
+            writeln!(writer, "{},datafixerupper-,authlib", i)?;
             continue;
         }
         if i.starts_with("--launchTarget") {
