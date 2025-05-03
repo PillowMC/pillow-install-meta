@@ -51,7 +51,7 @@ pub(crate) fn create_install_profile(reader: impl Read, writer: impl Write, vers
             "artifact": {
                 "sha1": "6c926290d502d9f681fcf905e871f6b6fbb3bd78",
                 "size": 1694,
-                "url": "https://pillowmc.github.io/mappinggen/mappinggen-0.1.1.jar",
+                "url": "https://codeberg.org/PillowMC/mappinggen/releases/download/0.1.1/mappinggen-0.1.1.jar",
                 "path": "net/pillowmc/mappinggen/0.1.1/mappinggen-0.1.1.jar"
             }
         }
